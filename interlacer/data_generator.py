@@ -9,6 +9,32 @@ from tensorflow import keras
 from scripts import filepaths
 from interlacer import motion, utils
 
+import nibabel as nib #added by Diana
+
+def split_volume(volumes_dir): #function added by diana
+    """Get slices in region of interest for each 3D MRI nifti file.
+        
+    Args:
+      volumes_dir(str): Directory containing 3D MRI nifti files
+
+    Returns:
+      no variables, just creates "slice_dir" directory within directoty "volumes_dir" as an output 
+    """
+    volume_names = os.listdir(volumes_dir)
+    parent_dir=volumes_dir
+    mydirectory="\\slice_dir"
+    mypath=parent_dir+mydirectory
+    os.mkdir(mypath)
+    for img in volume_names:
+        imgpath=parent_dir+'\\'+img
+        nifti = nib.load(imgpath)
+        niftinp = np.array(nifti.dataobj)
+        subsetnp=niftinp[:,140:260,:] #need to change to agreed slice range
+        for s in range(subsetnp.shape[1]):
+            slice=subsetnp[:,s,:] #s goes from from s=0 to s=119
+            filename=img[:-4]+str(s)+'.npz'
+            savepath=mypath+'\\'+filename
+            np.savez(savepath,vol_data=slice)
 
 def normalize_slice(sl_data):
     """Normalize slice to z-scores across dataset.
