@@ -70,7 +70,8 @@ def get_mri_slices_from_dir(slice_dir):
                 img),
             mmap_mode='r')['vol_data']
         sl_data = vol_data
-        slices.append(sl_data)
+        if (sl_data.shape==(512,154)):
+            slices.append(sl_data)
     slices = np.asarray(slices)
     return slices
 
@@ -365,35 +366,36 @@ def generate_motion_data(
 
     """
     num_batches = np.ceil(len(images) / batch_size)
-    img_shape = images.shape[1]
+    #img_shape = images.shape[1]
 
     reim_images = images.copy()
     images = utils.split_reim(images)
     spectra = utils.convert_to_frequency_domain(images)
 
     while True:
-        n = images.shape[1]
+        x = images.shape[1]
+        y = images.shape[2]
         batch_inds = np.random.randint(0, images.shape[0], batch_size)
 
-        inputs = np.empty((0, n, n, 2))
-        outputs = np.empty((0, n, n, 2))
-        masks = np.empty((0, n, n, 2))
+        inputs = np.empty((0, x, y, 2))
+        outputs = np.empty((0, x, y, 2))
+        masks = np.empty((0, x, y, 2))
 
         for j in batch_inds:
             true_img = np.expand_dims(images[j, :, :, :], 0)
 
-            img_size = images.shape[1]
-            num_points = int(mot_frac * n)
+            #img_size = images.shape[1]
+            num_points = int(mot_frac * y)
             coord_list = np.sort(
                 np.random.choice(
-                    img_size,
+                    y, #changed from img_size
                     size=num_points,
                     replace=False))
             num_pix = np.zeros((num_points, 2))
             angle = np.zeros(num_points)
 
-            max_htrans_pix = n * max_htrans
-            max_vtrans_pix = n * max_vtrans
+            max_htrans_pix = y * max_htrans
+            max_vtrans_pix = x * max_vtrans
             max_rot_deg = 360 * max_rot
 
             num_pix[:, 0] = np.random.random(
@@ -411,7 +413,7 @@ def generate_motion_data(
             corrupt_img = utils.convert_to_image_domain(corrupt_k)
 
             nf = np.max(corrupt_img)
-
+        
             if(input_domain == 'FREQ'):
                 inputs = np.append(inputs, corrupt_k / nf, axis=0)
             elif(input_domain == 'IMAGE'):

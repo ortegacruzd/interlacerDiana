@@ -116,21 +116,24 @@ def get_interlacer_residual_model(
     if(enforce_dc):
         masks = Input(input_size)
 
-    n = inputs.get_shape().as_list()[1]
+    #x = inputs.get_shape().as_list()[1]
+    #y = inputs.get_shape().as_list()[2]
+    x = tf.shape(inputs)[1]
+    y = tf.shape(inputs)[2]
     inp_real = tf.expand_dims(inputs[:, :, :, 0], -1)
     inp_imag = tf.expand_dims(inputs[:, :, :, 1], -1)
 
     n_copies = int(num_features / 2)
 
     inp_copy = tf.reshape(tf.tile(tf.expand_dims(tf.concat(
-        [inp_real, inp_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, n, n, num_features])
+        [inp_real, inp_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, x, y, num_features])
 
     inputs_img = utils.convert_tensor_to_image_domain(inputs)
     inp_img_real = tf.expand_dims(inputs_img[:, :, :, 0], -1)
     inp_img_imag = tf.expand_dims(inputs_img[:, :, :, 1], -1)
 
     inp_img_copy = tf.reshape(tf.tile(tf.expand_dims(tf.concat(
-        [inp_img_real, inp_img_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, n, n, num_features])
+        [inp_img_real, inp_img_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, x, y, num_features])
 
     freq_in = inputs
     img_in = inputs_img
@@ -283,21 +286,22 @@ def get_alternating_residual_model(
     if(enforce_dc):
         masks = Input(input_size)
 
-    n = inputs.get_shape().as_list()[1]
+    x = inputs.get_shape().as_list()[1]
+    y = inputs.get_shape().as_list()[2]
     inp_real = tf.expand_dims(inputs[:, :, :, 0], -1)
     inp_imag = tf.expand_dims(inputs[:, :, :, 1], -1)
 
     n_copies = int(num_features / 2)
 
     inp_copy = tf.reshape(tf.tile(tf.expand_dims(tf.concat(
-        [inp_real, inp_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, n, n, num_features])
+        [inp_real, inp_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, x, y, num_features])
 
     inputs_img = utils.convert_tensor_to_image_domain(inputs)
     inp_img_real = tf.expand_dims(inputs_img[:, :, :, 0], -1)
     inp_img_imag = tf.expand_dims(inputs_img[:, :, :, 1], -1)
 
     inp_img_copy = tf.reshape(tf.tile(tf.expand_dims(tf.concat(
-        [inp_img_real, inp_img_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, n, n, num_features])
+        [inp_img_real, inp_img_imag], axis=3), 4), [1, 1, 1, 1, n_copies]), [-1, x, y, num_features])
 
     prev_layer = inputs
 

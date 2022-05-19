@@ -90,13 +90,13 @@ if('FASTMRI' in exp_config.dataset):
         fm_train_dir,
         exp_config,
         fs=('FS' in exp_config.dataset))
-    print('Generated training generator')
+    print('Generated training generator FASTMRI')
 
     val_generator = fastmri_data_generator.generate_data(
         fm_val_dir,
         exp_config,
         fs=('FS' in exp_config.dataset))
-    print('Generated validation generator')
+    print('Generated training generator FASTMRI')
 else:
     train_generator = data_generator.generate_data(
         img_train,
@@ -115,7 +115,6 @@ if('FASTMRI' in exp_config.dataset):
     n = None
 else:
     n = img_train.shape[1]
-
 if(exp_config.architecture == 'CONV'):
     model = models.get_conv_no_residual_model(
         (n,

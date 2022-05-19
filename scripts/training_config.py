@@ -108,7 +108,7 @@ class TrainingConfig:
 
     def set_job_name(self):
         """Set job name for storing training logs."""
-        self.job_name = self.dataset
+        self.job_name = str(self.dataset) #changed by Diana for testing train.py in jupyter. before self.job_name = self.dataset
         for tag in [
                 self.task,
                 self.us_frac,
